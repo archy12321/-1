@@ -1,3 +1,53 @@
-{
-	"folders": []
-}
+import json
+
+def create_note(note_title, note_content):
+    note = {"title": note_title, "content": note_content}
+    return note
+
+def save_note(note):
+    with open("notes.json", "a") as file:
+        json.dump(note, file)
+        file.write('\n')
+
+def read_notes():
+    with open("notes.json", "r") as file:
+        for line in file:
+            note = json.loads(line)
+            print(f"Title: {note['title']}\nContent: {note['content']}\n")
+
+def edit_note(note_title, new_content):
+    with open("notes.json", "r+") as file:
+        notes = [json.loads(line) for line in file]
+        for note in notes:
+            if note['title'] == note_title:
+                note['content'] = new_content
+        file.seek(0)
+        file.truncate()
+        for note in notes:
+            json.dump(note, file)
+            file.write('\n')
+
+def delete_note(note_title):
+    with open("notes.json", "r+") as file:
+        notes = [json.loads(line) for line in file]
+        file.seek(0)
+        file.truncate()
+        for note in notes:
+            if note['title'] != note_title:
+                json.dump(note, file)
+                file.write('\n')
+
+# Пример использования функций
+note1 = create_note("Заметка 1", "Содержание заметки 1")
+note2 = create_note("Заметка 2", "Содержание заметки 2")
+
+save_note(note1)
+save_note(note2)
+
+read_notes()
+
+edit_note("Заметка 1", "Новое содержание заметки 1")
+
+delete_note("Заметка 2")
+
+read_notes()
